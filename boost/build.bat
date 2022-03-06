@@ -9,7 +9,7 @@ if "%SrcBoost%" == "" set SrcBoost=%BinDir%/Boost
 ::set VS150COMNTOOLS=D:\DevTool\VS2019\Common7\Tools
 
 if not exist "%SrcBoost%/boost_1_64_0" (
-    "%~dp0/../dev-bin/7z" x "%~dp0/boost_1_64_0.7z" -o"%SrcBoost%" ^
+    7z x "%~dp0/boost_1_64_0.7z" -o"%SrcBoost%" ^
         boost_1_64_0\boost\ ^
         boost_1_64_0\libs\ ^
         boost_1_64_0\tools\ ^
