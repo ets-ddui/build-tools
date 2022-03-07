@@ -1,6 +1,7 @@
 if "%BinDir%" == "" set BinDir=%~dp0..\Out
 if "%BinTemp%" == "" set BinTemp=%BinDir%\Temp
 if "%SrcNode%" == "" set SrcNode=%BinDir%\Node
+if "%ToolPath%" == "" set ToolPath=%~dp0..
 
 if not exist "%SrcNode%/node-v0.12.18" (
     pushd "%SrcNode%"
@@ -12,10 +13,10 @@ if not exist "%SrcNode%/node-v0.12.18" (
 
 setlocal
 
-set path=%path%;%~dp0/../dev-bin/python;%~dp0/../dev-bin/sed
+set path=%path%;%ToolPath%/dev-bin/python;%ToolPath%/dev-bin/sed
 
 rem python默认是通过查找"lib/os.py"确定执行文件目录，此目录会影响DLLs中的模块的加载
-set PYTHONHOME=%~dp0/../dev-bin/python
+set PYTHONHOME=%ToolPath%/dev-bin/python
 
 pushd "%SrcNode%/node-v0.12.18"
 
@@ -49,7 +50,7 @@ sed -i -r "s/python/%Python_Path:\=\\%/g; s/&quot;[^ ]+CORE&quot;/CORE/; s/&quot
 	"deps/v8/tools/gyp/js2c.vcxproj"
 
 rem 3.2 修正v8的生成路径
-for /F %%i in ('call find.bat -m f -e "\.vcxproj$" .') do sed -i -r ^
+for /F %%i in ('python "%ToolPath%/find.py" -m f -e "\.vcxproj$" .') do sed -i -r ^
 	"s/<OutDir>.*<\/OutDir>/<OutDir>%BinDir:\=\\%\\Node\\<\/OutDir>/; s/<IntDir>.*<\/IntDir>/<IntDir>%BinTemp:\=\\%\\Node\\$\(ProjectName\)\\<\/IntDir>/" %%i
 
 rem 3.3 修正node工程中manifest路径错误的问题
@@ -57,7 +58,7 @@ sed -i -r "s/<AdditionalManifestFiles>.*<\/AdditionalManifestFiles>/<AdditionalM
 	"node.vcxproj"
 
 rem 3.9 删除sed生成的临时文件
-for /F %%i in ('call find.bat -m f -e "\\sed\w+$" .') do del %%i
+for /F %%i in ('python "%ToolPath%/find.py" -m f -e "\\sed\w+$" .') do del %%i
 
 popd
 
